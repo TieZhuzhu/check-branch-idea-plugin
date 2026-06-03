@@ -27,6 +27,15 @@
 - 初始版本不自动恢复搁置变更或暂存栈内容。
 - 批量切换允许部分项目成功、部分项目失败。
 
+## 实施入口
+
+- 构建配置入口：`build.gradle.kts`
+- Gradle 项目入口：`settings.gradle.kts`
+- 插件描述入口：`src/main/resources/META-INF/plugin.xml`
+- 中文资源入口：`src/main/resources/messages/CheckBranchBundle.properties`
+- 持续集成入口：`.github/workflows/ci.yml`
+- 标签发布入口：`.github/workflows/release.yml`
+
 ## 相关文档
 
 - 规格文档：`specs/001-branch-switch-plugin/spec.md`

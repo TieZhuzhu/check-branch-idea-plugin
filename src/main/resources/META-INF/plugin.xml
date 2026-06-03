@@ -1,0 +1,18 @@
+<idea-plugin>
+    <id>com.augustlee.tool.checkbranch</id>
+    <name>多项目分支切换</name>
+    <vendor email="l836268029@gmail.com" url="https://www.augustlee.cn">August Lee</vendor>
+    <resource-bundle>messages.CheckBranchBundle</resource-bundle>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="分支切换"
+                    anchor="right"
+                    canCloseContents="false"
+                    icon="/META-INF/pluginIcon.svg"
+                    factoryClass="com.augustlee.tool.checkbranch.CheckBranchToolWindowFactory"/>
+    </extensions>
+</idea-plugin>

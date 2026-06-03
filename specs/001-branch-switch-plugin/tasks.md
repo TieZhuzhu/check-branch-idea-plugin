@@ -20,16 +20,16 @@
 
 **目的**：建立 Java 21 IDEA 插件项目基础、发布流水线和中文资源入口。
 
-- [ ] T001 创建 Gradle Kotlin DSL 项目骨架：settings.gradle.kts、build.gradle.kts、gradle.properties
-- [ ] T002 配置 Gradle Wrapper 使用项目约定版本：gradle/wrapper/gradle-wrapper.properties
-- [ ] T003 创建插件描述文件并声明 Java、Git、平台依赖：src/main/resources/META-INF/plugin.xml
-- [ ] T004 [P] 创建中文资源文件：src/main/resources/messages/CheckBranchBundle.properties
-- [ ] T005 [P] 创建源码包目录和测试包目录：src/main/java/com/augustlee/tool/checkbranch/、src/test/java/com/augustlee/tool/checkbranch/
-- [ ] T006 [P] 创建插件图标占位资源：src/main/resources/META-INF/pluginIcon.svg
-- [ ] T007 创建持续集成流水线：.github/workflows/ci.yml
-- [ ] T008 创建标签发布流水线：.github/workflows/release.yml
-- [ ] T009 更新项目构建说明：README.md
-- [ ] T010 更新知识库功能文档的实施入口：docs/features/branch-switch-plugin.md
+- [X] T001 创建 Gradle Kotlin DSL 项目骨架：settings.gradle.kts、build.gradle.kts、gradle.properties
+- [X] T002 配置 Gradle Wrapper 使用项目约定版本：gradle/wrapper/gradle-wrapper.properties
+- [X] T003 创建插件描述文件并声明 Java、Git、平台依赖：src/main/resources/META-INF/plugin.xml
+- [X] T004 [P] 创建中文资源文件：src/main/resources/messages/CheckBranchBundle.properties
+- [X] T005 [P] 创建源码包目录和测试包目录：src/main/java/com/augustlee/tool/checkbranch/、src/test/java/com/augustlee/tool/checkbranch/
+- [X] T006 [P] 创建插件图标占位资源：src/main/resources/META-INF/pluginIcon.svg
+- [X] T007 创建持续集成流水线：.github/workflows/ci.yml
+- [X] T008 创建标签发布流水线：.github/workflows/release.yml
+- [X] T009 更新项目构建说明：README.md
+- [X] T010 更新知识库功能文档的实施入口：docs/features/branch-switch-plugin.md
 
 ---
 
