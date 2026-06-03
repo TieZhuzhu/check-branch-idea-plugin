@@ -15,6 +15,7 @@
 - 切换后不自动恢复暂存变更，由开发者手动恢复并解决可能出现的冲突。
 - 支持单个项目切换和多个项目批量切换。
 - 展示每个项目的切换结果、失败原因、主分支回退状态和待手动恢复提示。
+- 关闭工具窗口后，当前项目会话内保留最近一次切换结果摘要；关闭 IDEA 项目后不承诺跨会话保留。
 
 ## 初始范围
 
@@ -27,4 +28,6 @@
 ## 相关文档
 
 - 规格文档：`specs/001-branch-switch-plugin/spec.md`
+- 实施计划：`specs/001-branch-switch-plugin/plan.md`
+- 快速开始：`specs/001-branch-switch-plugin/quickstart.md`
 - 技术选型：`docs/decisions/idea-plugin-tech-stack.md`
