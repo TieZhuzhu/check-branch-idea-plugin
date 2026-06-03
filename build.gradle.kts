@@ -10,6 +10,8 @@ group = "com.augustlee.tool"
 version = "0.1.0-SNAPSHOT"
 
 repositories {
+    mavenCentral()
+
     intellijPlatform {
         defaultRepositories()
     }
@@ -30,6 +32,7 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.10.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("junit:junit:4.13.2")
 }
 
 intellijPlatform {

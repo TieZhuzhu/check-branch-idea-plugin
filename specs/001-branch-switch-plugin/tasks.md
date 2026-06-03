@@ -39,20 +39,20 @@
 
 **关键提醒**：本阶段完成前，不得开始任何用户故事实施。
 
-- [ ] T011 [P] 创建工作区仓库模型：src/main/java/com/augustlee/tool/checkbranch/model/WorkspaceRepository.java
-- [ ] T012 [P] 创建分支切换请求模型：src/main/java/com/augustlee/tool/checkbranch/model/BranchSwitchRequest.java
-- [ ] T013 [P] 创建临时变更记录模型：src/main/java/com/augustlee/tool/checkbranch/model/TemporaryChangeRecord.java
-- [ ] T014 [P] 创建切换结果模型：src/main/java/com/augustlee/tool/checkbranch/model/SwitchResult.java
-- [ ] T015 [P] 创建结果状态枚举：src/main/java/com/augustlee/tool/checkbranch/model/SwitchResultStatus.java
-- [ ] T016 [P] 创建变更保护模式枚举：src/main/java/com/augustlee/tool/checkbranch/model/ChangeProtectionMode.java
-- [ ] T017 [P] 创建分支偏好状态服务：src/main/java/com/augustlee/tool/checkbranch/service/BranchPreferenceService.java
-- [ ] T018 [P] 创建中文通知服务：src/main/java/com/augustlee/tool/checkbranch/notification/CheckBranchNotifier.java
-- [ ] T019 创建右侧工具窗口工厂：src/main/java/com/augustlee/tool/checkbranch/CheckBranchToolWindowFactory.java
-- [ ] T020 创建工具窗口主面板骨架：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
-- [ ] T021 [P] 创建仓库表格模型骨架：src/main/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModel.java
-- [ ] T022 [P] 创建结果展示面板骨架：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
-- [ ] T023 [P] 创建模型校验单元测试：src/test/java/com/augustlee/tool/checkbranch/model/BranchSwitchModelTest.java
-- [ ] T024 [P] 创建中文资源完整性测试：src/test/java/com/augustlee/tool/checkbranch/CheckBranchBundleTest.java
+- [X] T011 [P] 创建工作区仓库模型：src/main/java/com/augustlee/tool/checkbranch/model/WorkspaceRepository.java
+- [X] T012 [P] 创建分支切换请求模型：src/main/java/com/augustlee/tool/checkbranch/model/BranchSwitchRequest.java
+- [X] T013 [P] 创建临时变更记录模型：src/main/java/com/augustlee/tool/checkbranch/model/TemporaryChangeRecord.java
+- [X] T014 [P] 创建切换结果模型：src/main/java/com/augustlee/tool/checkbranch/model/SwitchResult.java
+- [X] T015 [P] 创建结果状态枚举：src/main/java/com/augustlee/tool/checkbranch/model/SwitchResultStatus.java
+- [X] T016 [P] 创建变更保护模式枚举：src/main/java/com/augustlee/tool/checkbranch/model/ChangeProtectionMode.java
+- [X] T017 [P] 创建分支偏好状态服务：src/main/java/com/augustlee/tool/checkbranch/service/BranchPreferenceService.java
+- [X] T018 [P] 创建中文通知服务：src/main/java/com/augustlee/tool/checkbranch/notification/CheckBranchNotifier.java
+- [X] T019 创建右侧工具窗口工厂：src/main/java/com/augustlee/tool/checkbranch/CheckBranchToolWindowFactory.java
+- [X] T020 创建工具窗口主面板骨架：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
+- [X] T021 [P] 创建仓库表格模型骨架：src/main/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModel.java
+- [X] T022 [P] 创建结果展示面板骨架：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
+- [X] T023 [P] 创建模型校验单元测试：src/test/java/com/augustlee/tool/checkbranch/model/BranchSwitchModelTest.java
+- [X] T024 [P] 创建中文资源完整性测试：src/test/java/com/augustlee/tool/checkbranch/CheckBranchBundleTest.java
 
 **检查点**：插件可被 IDEA 识别，工具窗口可加载空面板，模型和中文资源测试通过。
 
@@ -66,18 +66,18 @@
 
 ### 用户故事 1 的测试
 
-- [ ] T025 [P] [US1] 创建仓库发现服务单元测试：src/test/java/com/augustlee/tool/checkbranch/service/RepositoryDiscoveryServiceTest.java
-- [ ] T026 [P] [US1] 创建仓库表格模型测试：src/test/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModelTest.java
-- [ ] T027 [US1] 创建多 Git 仓库刷新集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/RepositoryRefreshIntegrationTest.java
+- [X] T025 [P] [US1] 创建仓库发现服务单元测试：src/test/java/com/augustlee/tool/checkbranch/service/RepositoryDiscoveryServiceTest.java
+- [X] T026 [P] [US1] 创建仓库表格模型测试：src/test/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModelTest.java
+- [X] T027 [US1] 创建多 Git 仓库刷新集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/RepositoryRefreshIntegrationTest.java
 
 ### 用户故事 1 的实现
 
-- [ ] T028 [US1] 实现仓库发现服务：src/main/java/com/augustlee/tool/checkbranch/service/RepositoryDiscoveryService.java
-- [ ] T029 [US1] 在仓库发现服务中读取当前分支、阻塞状态和未提交变更状态：src/main/java/com/augustlee/tool/checkbranch/service/RepositoryDiscoveryService.java
-- [ ] T030 [US1] 将仓库刷新接入工具窗口顶部刷新按钮：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
-- [ ] T031 [US1] 在仓库表格中展示名称、路径、当前分支、变更状态和可切换状态：src/main/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModel.java
-- [ ] T032 [US1] 在工具窗口中实现空状态和刷新失败中文提示：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
-- [ ] T033 [US1] 更新用户故事 1 相关文档：docs/features/branch-switch-plugin.md
+- [X] T028 [US1] 实现仓库发现服务：src/main/java/com/augustlee/tool/checkbranch/service/RepositoryDiscoveryService.java
+- [X] T029 [US1] 在仓库发现服务中读取当前分支、阻塞状态和未提交变更状态：src/main/java/com/augustlee/tool/checkbranch/service/RepositoryDiscoveryService.java
+- [X] T030 [US1] 将仓库刷新接入工具窗口顶部刷新按钮：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
+- [X] T031 [US1] 在仓库表格中展示名称、路径、当前分支、变更状态和可切换状态：src/main/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModel.java
+- [X] T032 [US1] 在工具窗口中实现空状态和刷新失败中文提示：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
+- [X] T033 [US1] 更新用户故事 1 相关文档：docs/features/branch-switch-plugin.md
 
 **检查点**：用户故事 1 可独立演示，未实现切换也能完成仓库状态扫描和展示。
 

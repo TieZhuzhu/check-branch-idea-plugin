@@ -9,6 +9,8 @@
     <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="checkbranch.notification"
+                           displayType="BALLOON"/>
         <toolWindow id="分支切换"
                     anchor="right"
                     canCloseContents="false"
