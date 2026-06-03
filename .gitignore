@@ -36,3 +36,4 @@ build/
 sandbox/
 .run/
 !gradle/wrapper/gradle-wrapper.jar
+.intellijPlatform/
