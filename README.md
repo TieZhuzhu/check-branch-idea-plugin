@@ -1,14 +1,14 @@
-# easy-multi-project-check-branch
+# Easy Multi Project Check Branch
 
-`easy-multi-project-check-branch` is an IntelliJ IDEA plugin for checking and switching Git branches across multiple repositories in the same IDEA workspace.
+`Easy Multi Project Check Branch` is an IntelliJ IDEA plugin for checking and switching Git branches across multiple repositories in the same IDEA workspace.
 
-`easy-multi-project-check-branch` 是一个 IntelliJ IDEA 插件，用于在一个 IDEA 工作区内查看多个 Git 仓库状态，并对选中的仓库统一切换分支。它面向微服务、多模块、多仓库协同开发场景，目标是减少逐个仓库切分支的重复操作和漏切风险。
+`Easy Multi Project Check Branch` 是一个 IntelliJ IDEA 插件，用于在一个 IDEA 工作区内查看多个 Git 仓库状态，并对选中的仓库统一切换分支。它面向微服务、多模块、多仓库协同开发场景，目标是减少逐个仓库切分支的重复操作和漏切风险。
 
 <!-- Plugin description -->
 
-<h2>easy-multi-project-check-branch</h2>
+<h2>Easy Multi Project Check Branch</h2>
 
-<p>easy-multi-project-check-branch helps you inspect and switch branches for multiple Git repositories from one IntelliJ IDEA tool window.</p>
+<p>Easy Multi Project Check Branch helps you inspect and switch branches for multiple Git repositories from one IntelliJ IDEA tool window.</p>
 
 <p>Key features:</p>
 
@@ -39,7 +39,7 @@
 ## 项目信息
 
 - 插件 ID：`com.augustlee.tool.checkbranch`
-- 插件名称：`easy-multi-project-check-branch`
+- 插件名称：`Easy Multi Project Check Branch`
 - Gradle 根项目：`check-branch-idea-plugin`
 - 主包名：`com.augustlee.tool.checkbranch`
 - Java 版本：21

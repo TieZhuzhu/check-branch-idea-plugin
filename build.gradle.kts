@@ -41,7 +41,7 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        name = "easy-multi-project-check-branch"
+        name = "Easy Multi Project Check Branch"
         description = provider {
             val readme = layout.projectDirectory.file("README.md").asFile.readText(Charsets.UTF_8)
             val startMarker = "<!-- Plugin description -->"
