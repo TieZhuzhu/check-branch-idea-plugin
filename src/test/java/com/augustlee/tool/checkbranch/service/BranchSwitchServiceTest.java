@@ -80,6 +80,7 @@ class BranchSwitchServiceTest {
         createBareRemoteRepositoryWithMain(tempDir, remoteRoot);
         Path localRoot = tempDir.resolve("service-broken-remote");
         runGit(tempDir.toString(), "clone", "-b", "main", remoteRoot.toString(), localRoot.toString());
+        configureGitUser(localRoot);
         runGit(localRoot.toString(), "checkout", "-b", "feature/demo");
         runGit(localRoot.toString(), "commit", "--allow-empty", "-m", "feature-demo");
         runGit(localRoot.toString(), "push", "-u", "origin", "feature/demo");
@@ -150,6 +151,7 @@ class BranchSwitchServiceTest {
         createBareRemoteRepositoryWithMain(tempDir, remoteRoot);
         Path localRoot = tempDir.resolve("service-user");
         runGit(tempDir.toString(), "clone", "-b", "main", remoteRoot.toString(), localRoot.toString());
+        configureGitUser(localRoot);
         runGit(localRoot.toString(), "checkout", "-b", "feature/remote-demo");
         runGit(localRoot.toString(), "commit", "--allow-empty", "-m", "remote-demo");
         runGit(localRoot.toString(), "push", "-u", "origin", "feature/remote-demo");
@@ -270,8 +272,7 @@ class BranchSwitchServiceTest {
 
     private WorkspaceRepository createGitRepository(Path tempDir, Path repositoryRoot, String branchName) throws IOException {
         runGit(tempDir.toString(), "init", repositoryRoot.toString());
-        runGit(repositoryRoot.toString(), "config", "user.name", "codex");
-        runGit(repositoryRoot.toString(), "config", "user.email", "codex@example.com");
+        configureGitUser(repositoryRoot);
         Files.writeString(repositoryRoot.resolve("README.md"), "# test", StandardCharsets.UTF_8);
         runGit(repositoryRoot.toString(), "add", ".");
         runGit(repositoryRoot.toString(), "commit", "-m", "init");
@@ -297,6 +298,11 @@ class BranchSwitchServiceTest {
         runGit(tempDir.toString(), "init", "--bare", remoteRoot.toString());
         runGit(seedRoot.toString(), "push", "-u", "origin", "main");
         runGit(remoteRoot.toString(), "symbolic-ref", "HEAD", "refs/heads/main");
+    }
+
+    private void configureGitUser(Path repositoryRoot) throws IOException {
+        runGit(repositoryRoot.toString(), "config", "user.name", "codex");
+        runGit(repositoryRoot.toString(), "config", "user.email", "codex@example.com");
     }
 
     private String runGit(String workingDirectory, String... command) throws IOException {
