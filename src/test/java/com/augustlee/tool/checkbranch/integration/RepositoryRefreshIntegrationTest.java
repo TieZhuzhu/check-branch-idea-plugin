@@ -35,7 +35,9 @@ class RepositoryRefreshIntegrationTest {
         Files.writeString(servicePay.resolve(".git").resolve("rebase-apply"), "rebase", StandardCharsets.UTF_8);
 
         RepositoryDiscoveryService repositoryDiscoveryService = new RepositoryDiscoveryService();
-        List<WorkspaceRepository> repositories = repositoryDiscoveryService.discoverRepositoriesFromPaths(List.of(tempDir));
+        List<WorkspaceRepository> repositories = repositoryDiscoveryService.discoverRepositoriesFromPaths(
+                List.of(serviceOrder, serviceUser, servicePay)
+        );
 
         assertEquals(3, repositories.size());
         assertEquals("service-order", repositories.get(0).getDisplayName());

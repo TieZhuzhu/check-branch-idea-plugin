@@ -57,8 +57,22 @@
 - 仓库 A 切换到目标分支。
 - 仓库 B 回退到主分支并展示回退状态。
 - 仓库 C 在切换前保存变更，并提示需要手动恢复。
-- 如果仓库 C 的 IDEA 搁置变更不可用，界面会用中文说明是否改用 Git 暂存栈，以及两者恢复入口的差异。
+- 如果仓库 C 的 IDEA 搁置变更不可用，界面会用中文说明当前未自动启用 Git 暂存栈降级。
 - 所有结果、失败原因和恢复提示均为中文。
+
+## 当前验证记录
+
+- 2026-06-03：已在 `JDK 21` 下执行 `.\gradlew.bat test --stacktrace --no-configuration-cache`，通过。
+- 2026-06-03：已执行 `.\gradlew.bat buildPlugin --stacktrace --no-configuration-cache`，通过，产物为 `build/distributions/check-branch-idea-plugin-0.1.0-SNAPSHOT.zip`。
+- 2026-06-03：已执行 `.\gradlew.bat verifyPlugin --stacktrace --no-configuration-cache`，未通过。当前阻塞为 `:intellijPluginVerifierIdes` 依赖解析阶段出现 `ConcurrentModificationException`，属于 Gradle / IntelliJ Plugin Verifier 依赖链路问题，尚未定位到业务代码错误。
+- 2026-06-03：IDEA 内手动验证仍需在本机通过 `.\gradlew.bat runIde` 打开沙箱 IDE 后执行，当前会话未自动启动图形界面进行录制式验收。
+
+## 操作文档
+
+详细操作说明见：
+
+- `docs/operations/branch-switch-plugin-user-guide.md`
+- `docs/operations/branch-switch-plugin-release-guide.md`
 
 ## 发布验证
 

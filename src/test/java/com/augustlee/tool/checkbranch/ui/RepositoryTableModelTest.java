@@ -32,9 +32,9 @@ class RepositoryTableModelTest {
 
         assertEquals(1, tableModel.getRowCount());
         assertEquals("订单服务", tableModel.getValueAt(0, 1));
-        assertEquals("main", tableModel.getValueAt(0, 3));
-        assertEquals("有未提交变更", tableModel.getValueAt(0, 5));
-        assertEquals("可切换", tableModel.getValueAt(0, 6));
+        assertEquals("main", tableModel.getValueAt(0, 2));
+        assertEquals("目标分支存在", tableModel.getValueAt(0, 3));
+        assertEquals(RepositoryTableModel.RepositoryStatusColor.WARNING, tableModel.getStatusColorAt(0));
     }
 
     /**
@@ -52,6 +52,25 @@ class RepositoryTableModelTest {
 
         assertTrue(repository.isSelected());
         assertEquals(1, tableModel.getSelectedRepositories().size());
-        assertEquals("刷新完成", tableModel.getValueAt(0, 7));
+        assertEquals("正常", tableModel.getValueAt(0, 3));
+    }
+
+    /**
+     * 验证单独取消某个仓库勾选时，不会影响其他仓库。
+     */
+    @Test
+    void shouldUncheckSingleRepositoryWithoutAffectingOthers() {
+        RepositoryTableModel tableModel = new RepositoryTableModel();
+        WorkspaceRepository serviceOrder = new WorkspaceRepository("repo-order", "订单服务", "E:/workspace/order");
+        WorkspaceRepository serviceUser = new WorkspaceRepository("repo-user", "用户服务", "E:/workspace/user");
+        serviceOrder.setSelected(true);
+        serviceUser.setSelected(true);
+        tableModel.setRepositories(List.of(serviceOrder, serviceUser));
+
+        tableModel.setValueAt(Boolean.FALSE, 0, 0);
+
+        assertFalse(serviceOrder.isSelected());
+        assertTrue(serviceUser.isSelected());
+        assertEquals(1, tableModel.getSelectedRepositories().size());
     }
 }

@@ -51,6 +51,40 @@
 - 发布流程需要上传插件 ZIP 和可选独立安装包。
 - 如果后续要发布到 JetBrains Marketplace，需要通过环境变量提供签名证书和发布 token。
 
+## 当前实际构建命令
+
+当前仓库已验证或约定的命令如下：
+
+- 单元与集成测试：
+
+```powershell
+.\gradlew.bat test --stacktrace --no-configuration-cache
+```
+
+- 构建插件 ZIP：
+
+```powershell
+.\gradlew.bat buildPlugin --stacktrace --no-configuration-cache
+```
+
+- 插件验证：
+
+```powershell
+.\gradlew.bat verifyPlugin --stacktrace --no-configuration-cache
+```
+
+- 沙箱运行：
+
+```powershell
+.\gradlew.bat runIde
+```
+
+当前状态说明：
+
+- `test` 已通过。
+- `buildPlugin` 已通过，并生成插件 ZIP。
+- `verifyPlugin` 当前受 `:intellijPluginVerifierIdes` 依赖解析阶段的 `ConcurrentModificationException` 阻塞，待后续定位 Gradle / Plugin Verifier 兼容问题。
+
 ## 暂不采用的方案
 
 - 暂不引入 Kotlin 作为主开发语言，当前项目需求用 Java 更贴近参考项目和既有代码风格。

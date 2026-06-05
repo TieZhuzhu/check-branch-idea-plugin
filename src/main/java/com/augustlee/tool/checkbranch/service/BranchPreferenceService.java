@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 保存当前项目与分支切换偏好相关的状态数据。
@@ -26,6 +27,7 @@ import java.util.List;
 )
 public final class BranchPreferenceService implements PersistentStateComponent<BranchPreferenceService.StateBean> {
 
+    private static final Pattern INVALID_BRANCH_PATTERN = Pattern.compile("[ ~^:?*\\\\\\[]");
     private StateBean state = new StateBean();
 
     /**
@@ -138,6 +140,27 @@ public final class BranchPreferenceService implements PersistentStateComponent<B
      */
     public void updateLastRefreshAt() {
         state.lastRefreshAt = Instant.now().toString();
+    }
+
+    /**
+     * 判断目标分支名称是否合法。
+     *
+     * @param targetBranch 目标分支名称
+     * @return 合法返回 {@code true}
+     */
+    public boolean isValidTargetBranch(String targetBranch) {
+        return targetBranch != null
+                && !targetBranch.trim().isEmpty()
+                && !INVALID_BRANCH_PATTERN.matcher(targetBranch.trim()).find();
+    }
+
+    /**
+     * 按项目偏好返回主分支候选顺序。
+     *
+     * @return 主分支候选顺序
+     */
+    public List<String> getMainBranchCandidates() {
+        return getMainBranchNames();
     }
 
     /**

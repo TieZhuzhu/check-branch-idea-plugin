@@ -1,6 +1,7 @@
 package com.augustlee.tool.checkbranch.notification;
 
 import com.intellij.notification.NotificationGroupManager;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
@@ -47,10 +48,44 @@ public class CheckBranchNotifier {
         notify(project, title, content, NotificationType.ERROR);
     }
 
+    /**
+     * 构建通知元数据，便于测试与上层组合逻辑复用。
+     *
+     * @param title 通知标题
+     * @param content 通知内容
+     * @param type 通知类型
+     * @return 通知元数据
+     */
+    public NotificationPayload buildPayload(String title, String content, NotificationType type) {
+        return new NotificationPayload(title, content, type);
+    }
+
+    /**
+     * 创建但不立即发送通知，便于测试或组合调用。
+     *
+     * @param title 通知标题
+     * @param content 通知内容
+     * @param type 通知类型
+     * @return 创建出的通知对象
+     */
+    public com.intellij.notification.Notification buildNotification(String title, String content, NotificationType type) {
+        NotificationPayload payload = buildPayload(title, content, type);
+        NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID);
+        return group.createNotification(payload.title(), payload.content(), payload.type());
+    }
+
     private void notify(@Nullable Project project, String title, String content, NotificationType type) {
-        NotificationGroupManager.getInstance()
-                .getNotificationGroup(NOTIFICATION_GROUP_ID)
-                .createNotification(title, content, type)
-                .notify(project);
+        buildNotification(title, content, type).notify(project);
+    }
+
+    /**
+     * 表示通知展示所需的核心元数据。
+     *
+     * @param title 通知标题
+     * @param content 通知内容
+     * @param type 通知类型
+     * @author August Lee
+     */
+    public record NotificationPayload(String title, String content, NotificationType type) {
     }
 }

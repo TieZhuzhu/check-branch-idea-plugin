@@ -2,22 +2,23 @@ package com.augustlee.tool.checkbranch.service;
 
 import com.augustlee.tool.checkbranch.model.WorkspaceRepository;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import git4idea.repo.GitRepository;
+import git4idea.repo.GitRepositoryManager;
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.stream.Stream;
 
 /**
  * 负责扫描当前 IDEA 工作区中的 Git 仓库，并读取基础分支状态信息。
@@ -37,14 +38,15 @@ public class RepositoryDiscoveryService {
     public List<WorkspaceRepository> discoverRepositories(Project project) {
         Map<String, Path> repositoryPaths = new LinkedHashMap<>();
 
-        for (VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots()) {
-            Path contentRootPath = Path.of(contentRoot.getPath());
-            collectGitRepositories(contentRootPath, repositoryPaths);
+        for (GitRepository gitRepository : GitRepositoryManager.getInstance(project).getRepositories()) {
+            VirtualFile root = gitRepository.getRoot();
+            repositoryPaths.putIfAbsent(root.getPath(), Path.of(root.getPath()));
         }
-
-        ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(project);
-        for (VirtualFile vcsRoot : vcsManager.getRootsUnderVcs(vcsManager.findVcsByName("Git"))) {
-            repositoryPaths.putIfAbsent(vcsRoot.getPath(), Path.of(vcsRoot.getPath()));
+        if (repositoryPaths.isEmpty()) {
+            ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(project);
+            for (VirtualFile vcsRoot : vcsManager.getRootsUnderVcs(vcsManager.findVcsByName("Git"))) {
+                repositoryPaths.putIfAbsent(vcsRoot.getPath(), Path.of(vcsRoot.getPath()));
+            }
         }
 
         List<WorkspaceRepository> repositories = repositoryPaths.values().stream()
@@ -68,7 +70,9 @@ public class RepositoryDiscoveryService {
             return List.of();
         }
         for (Path root : roots) {
-            collectGitRepositories(root, repositoryPaths);
+            if (root != null && Files.exists(root.resolve(".git"))) {
+                repositoryPaths.putIfAbsent(root.toAbsolutePath().normalize().toString(), root);
+            }
         }
         return repositoryPaths.values().stream()
                 .sorted(Comparator.comparing(Path::toString))
@@ -102,7 +106,7 @@ public class RepositoryDiscoveryService {
         repository.setCurrentBranch(readCurrentBranch(repositoryRoot));
         repository.setMainBranchCandidate(readMainBranchCandidate(repositoryRoot));
         repository.setHasUncommittedChanges(hasUncommittedChanges(repositoryRoot));
-        repository.setTargetBranchState(BUNDLE.getString("status.branch.local"));
+        repository.setTargetBranchState(BUNDLE.getString("status.branch.unknown"));
         repository.setLastOperationResultSummary(BUNDLE.getString("status.result.none"));
 
         String blockReason = detectBlockReason(repositoryRoot);
@@ -110,23 +114,6 @@ public class RepositoryDiscoveryService {
         repository.setBlockReason(blockReason);
         repository.validate();
         return repository;
-    }
-
-    private void collectGitRepositories(Path root, Map<String, Path> repositoryPaths) {
-        if (root == null || !Files.exists(root)) {
-            return;
-        }
-        if (Files.isDirectory(root.resolve(".git"))) {
-            repositoryPaths.putIfAbsent(root.toAbsolutePath().normalize().toString(), root);
-            return;
-        }
-        try (Stream<Path> pathStream = Files.walk(root, 4)) {
-            pathStream
-                    .filter(path -> Files.isDirectory(path.resolve(".git")))
-                    .forEach(path -> repositoryPaths.putIfAbsent(path.toAbsolutePath().normalize().toString(), path));
-        } catch (IOException ignored) {
-            // 阶段 3 保持最小实现：读取失败的目录直接跳过，界面层再统一做刷新失败提示。
-        }
     }
 
     private String readCurrentBranch(Path repositoryRoot) {
@@ -151,9 +138,17 @@ public class RepositoryDiscoveryService {
     }
 
     private String readMainBranchCandidate(Path repositoryRoot) {
+        Path refsRemotesMain = repositoryRoot.resolve(".git").resolve("refs").resolve("remotes").resolve("origin").resolve("main");
+        if (Files.exists(refsRemotesMain)) {
+            return "main";
+        }
         Path refsHeadsMain = repositoryRoot.resolve(".git").resolve("refs").resolve("heads").resolve("main");
         if (Files.exists(refsHeadsMain)) {
             return "main";
+        }
+        Path refsRemotesMaster = repositoryRoot.resolve(".git").resolve("refs").resolve("remotes").resolve("origin").resolve("master");
+        if (Files.exists(refsRemotesMaster)) {
+            return "master";
         }
         Path refsHeadsMaster = repositoryRoot.resolve(".git").resolve("refs").resolve("heads").resolve("master");
         if (Files.exists(refsHeadsMaster)) {
@@ -163,21 +158,45 @@ public class RepositoryDiscoveryService {
     }
 
     private boolean hasUncommittedChanges(Path repositoryRoot) {
-        try (Stream<Path> pathStream = Files.walk(repositoryRoot, 3)) {
-            return pathStream
-                    .filter(path -> !path.startsWith(repositoryRoot.resolve(".git")))
-                    .filter(Files::isRegularFile)
-                    .anyMatch(path -> {
-                        try {
-                            return Files.getLastModifiedTime(path).toInstant()
-                                    .isAfter(Instant.now().minusSeconds(30));
-                        } catch (IOException exception) {
-                            return false;
-                        }
-                    });
+        GitStatusResult result = runGitStatus(repositoryRoot, "status", "--porcelain", "--untracked-files=no");
+        return result.success() && !result.output().isBlank();
+    }
+
+    private GitStatusResult runGitStatus(Path repositoryRoot, String... arguments) {
+        List<String> command = new ArrayList<>();
+        command.add("git");
+        command.addAll(List.of(arguments));
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.directory(repositoryRoot.toFile());
+        processBuilder.redirectErrorStream(true);
+        try {
+            Process process = processBuilder.start();
+            String output = readStream(process.getInputStream());
+            int exitCode = process.waitFor();
+            return new GitStatusResult(exitCode == 0, output.trim());
         } catch (IOException exception) {
-            return false;
+            return new GitStatusResult(false, exception.getMessage());
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            return new GitStatusResult(false, "Git 状态检查被中断");
         }
+    }
+
+    private String readStream(java.io.InputStream inputStream) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!builder.isEmpty()) {
+                    builder.append(System.lineSeparator());
+                }
+                builder.append(line);
+            }
+            return builder.toString();
+        }
+    }
+
+    private record GitStatusResult(boolean success, String output) {
     }
 
     private String detectBlockReason(Path repositoryRoot) {

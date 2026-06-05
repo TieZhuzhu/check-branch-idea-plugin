@@ -40,7 +40,7 @@ class RepositoryDiscoveryServiceTest {
                 StandardCharsets.UTF_8
         );
 
-        List<WorkspaceRepository> repositories = repositoryDiscoveryService.discoverRepositoriesFromPaths(List.of(tempDir));
+        List<WorkspaceRepository> repositories = repositoryDiscoveryService.discoverRepositoriesFromPaths(List.of(serviceOrder, serviceUser));
 
         assertEquals(2, repositories.size());
         assertEquals("main", repositories.get(0).getCurrentBranch());
@@ -70,15 +70,29 @@ class RepositoryDiscoveryServiceTest {
         assertEquals("不可识别 Git 仓库", invalidSnapshot.getBlockReason());
     }
 
+    /**
+     * 验证同一路径重复传入时不会产生重复仓库。
+     *
+     * @param tempDir 临时目录
+     * @throws IOException 当测试目录初始化失败时抛出
+     */
+    @Test
+    void shouldNotDuplicateRepositoriesWhenSamePathProvidedTwice(@TempDir Path tempDir) throws IOException {
+        Path serviceOrder = createGitRepository(tempDir.resolve("service-order"), "ref: refs/heads/main");
+
+        List<WorkspaceRepository> repositories = repositoryDiscoveryService.discoverRepositoriesFromPaths(List.of(serviceOrder, serviceOrder));
+
+        assertEquals(1, repositories.size());
+        assertEquals("service-order", repositories.get(0).getDisplayName());
+    }
+
     private Path createGitRepository(Path repositoryRoot, String headContent) throws IOException {
         Files.createDirectories(repositoryRoot.resolve(".git").resolve("refs").resolve("heads"));
         Files.writeString(repositoryRoot.resolve(".git").resolve("HEAD"), headContent, StandardCharsets.UTF_8);
-        String branchName = headContent.substring(headContent.lastIndexOf('/') + 1);
-        Files.writeString(
-                repositoryRoot.resolve(".git").resolve("refs").resolve("heads").resolve(branchName),
-                "hash-" + branchName,
-                StandardCharsets.UTF_8
-        );
+        String branchName = headContent.substring("ref: refs/heads/".length());
+        Path branchFile = repositoryRoot.resolve(".git").resolve("refs").resolve("heads").resolve(branchName);
+        Files.createDirectories(branchFile.getParent());
+        Files.writeString(branchFile, "hash-" + branchName, StandardCharsets.UTF_8);
         Files.writeString(repositoryRoot.resolve("README.md"), "# test", StandardCharsets.UTF_8);
         return repositoryRoot;
     }

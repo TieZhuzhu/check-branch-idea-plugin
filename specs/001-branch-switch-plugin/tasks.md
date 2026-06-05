@@ -91,19 +91,19 @@
 
 ### 用户故事 2 的测试
 
-- [ ] T034 [P] [US2] 创建分支切换服务单元测试：src/test/java/com/augustlee/tool/checkbranch/service/BranchSwitchServiceTest.java
-- [ ] T035 [P] [US2] 创建主分支回退规则测试：src/test/java/com/augustlee/tool/checkbranch/service/MainBranchFallbackTest.java
-- [ ] T036 [US2] 创建批量切换集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/BatchBranchSwitchIntegrationTest.java
+- [X] T034 [P] [US2] 创建分支切换服务单元测试：src/test/java/com/augustlee/tool/checkbranch/service/BranchSwitchServiceTest.java
+- [X] T035 [P] [US2] 创建主分支回退规则测试：src/test/java/com/augustlee/tool/checkbranch/service/MainBranchFallbackTest.java
+- [X] T036 [US2] 创建批量切换集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/BatchBranchSwitchIntegrationTest.java
 
 ### 用户故事 2 的实现
 
-- [ ] T037 [US2] 实现分支切换服务：src/main/java/com/augustlee/tool/checkbranch/service/BranchSwitchService.java
-- [ ] T038 [US2] 实现目标分支本地和远端解析逻辑：src/main/java/com/augustlee/tool/checkbranch/service/BranchSwitchService.java
-- [ ] T039 [US2] 实现主分支候选读取与回退规则：src/main/java/com/augustlee/tool/checkbranch/service/BranchPreferenceService.java
-- [ ] T040 [US2] 实现目标分支输入校验和中文错误提示：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
-- [ ] T041 [US2] 将批量切换动作接入工具窗口执行按钮：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
-- [ ] T042 [US2] 将成功、回退、跳过和失败结果写入结果面板：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
-- [ ] T043 [US2] 更新批量切换和主分支回退文档：docs/features/branch-switch-plugin.md
+- [X] T037 [US2] 实现分支切换服务：src/main/java/com/augustlee/tool/checkbranch/service/BranchSwitchService.java
+- [X] T038 [US2] 实现目标分支本地和远端解析逻辑：src/main/java/com/augustlee/tool/checkbranch/service/BranchSwitchService.java
+- [X] T039 [US2] 实现主分支候选读取与回退规则：src/main/java/com/augustlee/tool/checkbranch/service/BranchPreferenceService.java
+- [X] T040 [US2] 实现目标分支输入校验和中文错误提示：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
+- [X] T041 [US2] 将批量切换动作接入工具窗口执行按钮：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
+- [X] T042 [US2] 将成功、回退、跳过和失败结果写入结果面板：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
+- [X] T043 [US2] 更新批量切换和主分支回退文档：docs/features/branch-switch-plugin.md
 
 **检查点**：用户故事 2 可独立演示，用户可批量切换并看到逐仓库结果。
 
@@ -117,19 +117,19 @@
 
 ### 用户故事 3 的测试
 
-- [ ] T044 [P] [US3] 创建变更保护服务单元测试：src/test/java/com/augustlee/tool/checkbranch/service/ChangeProtectionServiceTest.java
-- [ ] T045 [P] [US3] 创建临时变更记录测试：src/test/java/com/augustlee/tool/checkbranch/model/TemporaryChangeRecordTest.java
-- [ ] T046 [US3] 创建未提交变更保护集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/ChangeProtectionIntegrationTest.java
+- [X] T044 [P] [US3] 创建变更保护服务单元测试：src/test/java/com/augustlee/tool/checkbranch/service/ChangeProtectionServiceTest.java
+- [X] T045 [P] [US3] 创建临时变更记录测试：src/test/java/com/augustlee/tool/checkbranch/model/TemporaryChangeRecordTest.java
+- [X] T046 [US3] 创建未提交变更保护集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/ChangeProtectionIntegrationTest.java
 
 ### 用户故事 3 的实现
 
-- [ ] T047 [US3] 实现变更保护服务：src/main/java/com/augustlee/tool/checkbranch/service/ChangeProtectionService.java
-- [ ] T048 [US3] 实现 IDEA 搁置变更优先保存路径：src/main/java/com/augustlee/tool/checkbranch/service/ChangeProtectionService.java
-- [ ] T049 [US3] 实现 Git 暂存栈降级保存路径：src/main/java/com/augustlee/tool/checkbranch/service/ChangeProtectionService.java
-- [ ] T050 [US3] 实现未提交变更选择提示：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
-- [ ] T051 [US3] 将临时变更记录关联到切换结果：src/main/java/com/augustlee/tool/checkbranch/service/BranchSwitchService.java
-- [ ] T052 [US3] 在结果面板展示手动恢复中文提示：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
-- [ ] T053 [US3] 更新暂存降级策略文档：docs/features/branch-switch-plugin.md
+- [X] T047 [US3] 实现变更保护服务：src/main/java/com/augustlee/tool/checkbranch/service/ChangeProtectionService.java
+- [X] T048 [US3] 实现 IDEA 搁置变更优先保存路径：src/main/java/com/augustlee/tool/checkbranch/service/ChangeProtectionService.java
+- [X] T049 [US3] 实现 Git 暂存栈降级保存路径：src/main/java/com/augustlee/tool/checkbranch/service/ChangeProtectionService.java
+- [X] T050 [US3] 实现未提交变更选择提示：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
+- [X] T051 [US3] 将临时变更记录关联到切换结果：src/main/java/com/augustlee/tool/checkbranch/service/BranchSwitchService.java
+- [X] T052 [US3] 在结果面板展示手动恢复中文提示：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
+- [X] T053 [US3] 更新暂存降级策略文档：docs/features/branch-switch-plugin.md
 
 **检查点**：用户故事 3 可独立演示，未提交变更不会丢失，切换后提示用户手动恢复。
 
@@ -143,15 +143,15 @@
 
 ### 用户故事 4 的测试
 
-- [ ] T054 [P] [US4] 创建单仓库选择测试：src/test/java/com/augustlee/tool/checkbranch/ui/SingleRepositorySelectionTest.java
-- [ ] T055 [US4] 创建单仓库切换集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/SingleRepositorySwitchIntegrationTest.java
+- [X] T054 [P] [US4] 创建单仓库选择测试：src/test/java/com/augustlee/tool/checkbranch/ui/SingleRepositorySelectionTest.java
+- [X] T055 [US4] 创建单仓库切换集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/SingleRepositorySwitchIntegrationTest.java
 
 ### 用户故事 4 的实现
 
-- [ ] T056 [US4] 完善仓库选择状态维护：src/main/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModel.java
-- [ ] T057 [US4] 在切换请求中只包含选中仓库：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
-- [ ] T058 [US4] 在结果面板过滤未参与仓库：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
-- [ ] T059 [US4] 更新单仓库切换文档：docs/features/branch-switch-plugin.md
+- [X] T056 [US4] 完善仓库选择状态维护：src/main/java/com/augustlee/tool/checkbranch/ui/RepositoryTableModel.java
+- [X] T057 [US4] 在切换请求中只包含选中仓库：src/main/java/com/augustlee/tool/checkbranch/ui/BranchSwitchToolWindowContent.java
+- [X] T058 [US4] 在结果面板过滤未参与仓库：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
+- [X] T059 [US4] 更新单仓库切换文档：docs/features/branch-switch-plugin.md
 
 **检查点**：用户故事 4 可独立演示，单仓库切换不影响未选择仓库。
 
@@ -165,17 +165,17 @@
 
 ### 用户故事 5 的测试
 
-- [ ] T060 [P] [US5] 创建结果面板展示测试：src/test/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanelTest.java
-- [ ] T061 [P] [US5] 创建通知服务测试：src/test/java/com/augustlee/tool/checkbranch/notification/CheckBranchNotifierTest.java
-- [ ] T062 [US5] 创建混合结果集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/MixedSwitchResultIntegrationTest.java
+- [X] T060 [P] [US5] 创建结果面板展示测试：src/test/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanelTest.java
+- [X] T061 [P] [US5] 创建通知服务测试：src/test/java/com/augustlee/tool/checkbranch/notification/CheckBranchNotifierTest.java
+- [X] T062 [US5] 创建混合结果集成测试：src/test/java/com/augustlee/tool/checkbranch/integration/MixedSwitchResultIntegrationTest.java
 
 ### 用户故事 5 的实现
 
-- [ ] T063 [US5] 完善结果面板状态分组和中文文案：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
-- [ ] T064 [US5] 实现失败、跳过和待恢复通知：src/main/java/com/augustlee/tool/checkbranch/notification/CheckBranchNotifier.java
-- [ ] T065 [US5] 在结果中展示请求分支、最终分支和回退标识：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
-- [ ] T066 [US5] 实现当前项目会话内最近一次切换结果保留策略：src/main/java/com/augustlee/tool/checkbranch/service/SwitchResultStateService.java
-- [ ] T067 [US5] 更新结果反馈和恢复提示文档：docs/features/branch-switch-plugin.md
+- [X] T063 [US5] 完善结果面板状态分组和中文文案：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
+- [X] T064 [US5] 实现失败、跳过和待恢复通知：src/main/java/com/augustlee/tool/checkbranch/notification/CheckBranchNotifier.java
+- [X] T065 [US5] 在结果中展示请求分支、最终分支和回退标识：src/main/java/com/augustlee/tool/checkbranch/ui/SwitchResultPanel.java
+- [X] T066 [US5] 实现当前项目会话内最近一次切换结果保留策略：src/main/java/com/augustlee/tool/checkbranch/service/SwitchResultStateService.java
+- [X] T067 [US5] 更新结果反馈和恢复提示文档：docs/features/branch-switch-plugin.md
 
 **检查点**：用户故事 5 可独立演示，混合结果和恢复提示清晰可追踪。
 
@@ -185,16 +185,16 @@
 
 **目的**：完成插件验证、发布流水线、文档同步和宪章合规检查。
 
-- [ ] T068 [P] 补齐工具窗口界面契约实现记录：specs/001-branch-switch-plugin/contracts/tool-window-ui.md
-- [ ] T069 [P] 更新快速开始验证步骤：specs/001-branch-switch-plugin/quickstart.md
-- [ ] T070 [P] 更新技术选型文档中的实际构建命令：docs/decisions/idea-plugin-tech-stack.md
-- [ ] T071 执行单元测试并修复问题：build.gradle.kts
-- [ ] T072 执行插件构建并修复问题：build.gradle.kts
-- [ ] T073 执行插件验证并修复问题：build.gradle.kts
-- [ ] T074 执行快速开始手动验证并记录结果：specs/001-branch-switch-plugin/quickstart.md
-- [ ] T075 检查所有新增或修改文件为 UTF-8（非 BOM）：specs/001-branch-switch-plugin/quickstart.md
-- [ ] T076 检查代码注释、JavaDoc、日志、通知和用户可见输入输出均为中文：src/main/java/com/augustlee/tool/checkbranch/
-- [ ] T077 确认所有 JavaDoc 作者署名为 August Lee：src/main/java/com/augustlee/tool/checkbranch/
+- [X] T068 [P] 补齐工具窗口界面契约实现记录：specs/001-branch-switch-plugin/contracts/tool-window-ui.md
+- [X] T069 [P] 更新快速开始验证步骤：specs/001-branch-switch-plugin/quickstart.md
+- [X] T070 [P] 更新技术选型文档中的实际构建命令：docs/decisions/idea-plugin-tech-stack.md
+- [X] T071 执行单元测试并修复问题：build.gradle.kts
+- [X] T072 执行插件构建并修复问题：build.gradle.kts
+- [X] T073 执行插件验证并修复问题：build.gradle.kts
+- [X] T074 执行快速开始手动验证并记录结果：specs/001-branch-switch-plugin/quickstart.md
+- [X] T075 检查所有新增或修改文件为 UTF-8（非 BOM）：specs/001-branch-switch-plugin/quickstart.md
+- [X] T076 检查代码注释、JavaDoc、日志、通知和用户可见输入输出均为中文：src/main/java/com/augustlee/tool/checkbranch/
+- [X] T077 确认所有 JavaDoc 作者署名为 August Lee：src/main/java/com/augustlee/tool/checkbranch/
 
 ---
 

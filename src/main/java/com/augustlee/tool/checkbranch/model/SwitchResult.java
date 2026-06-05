@@ -166,6 +166,18 @@ public class SwitchResult {
     }
 
     /**
+     * 返回适合界面展示的仓库名称。
+     * 当前 `repositoryId` 可能是完整路径，这里统一收敛为最后一段名称。
+     *
+     * @return 仓库显示名称
+     */
+    public String getRepositoryDisplayName() {
+        String normalizedRepositoryId = repositoryId.replace('\\', '/');
+        int lastSlashIndex = normalizedRepositoryId.lastIndexOf('/');
+        return lastSlashIndex >= 0 ? normalizedRepositoryId.substring(lastSlashIndex + 1) : normalizedRepositoryId;
+    }
+
+    /**
      * 返回适合列表展示的中文摘要。
      *
      * @return 中文摘要

@@ -16,12 +16,8 @@ public class RepositoryTableModel extends AbstractTableModel {
     private static final String[] COLUMN_NAMES = {
             "参与切换",
             "仓库名称",
-            "仓库路径",
             "当前分支",
-            "目标分支状态",
-            "变更状态",
-            "可切换状态",
-            "最近结果"
+            "状态"
     };
 
     private final List<WorkspaceRepository> repositories = new ArrayList<>();
@@ -66,14 +62,8 @@ public class RepositoryTableModel extends AbstractTableModel {
         return switch (columnIndex) {
             case 0 -> repository.isSelected();
             case 1 -> repository.getDisplayName();
-            case 2 -> repository.getRootPath();
-            case 3 -> repository.getCurrentBranch();
-            case 4 -> repository.getTargetBranchState();
-            case 5 -> repository.hasUncommittedChanges() ? "有未提交变更" : "工作区干净";
-            case 6 -> repository.isOperationBlocked() ? repository.getBlockReason() : "可切换";
-            case 7 -> repository.getLastOperationResultSummary().isEmpty()
-                    ? "暂无结果"
-                    : repository.getLastOperationResultSummary();
+            case 2 -> repository.getCurrentBranch();
+            case 3 -> resolveStatusText(repository);
             default -> "";
         };
     }
@@ -83,7 +73,8 @@ public class RepositoryTableModel extends AbstractTableModel {
         if (columnIndex != 0 || rowIndex < 0 || rowIndex >= repositories.size()) {
             return;
         }
-        repositories.get(rowIndex).setSelected(Boolean.TRUE.equals(aValue));
+        boolean selected = Boolean.TRUE.equals(aValue);
+        repositories.get(rowIndex).setSelected(selected);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
@@ -121,6 +112,40 @@ public class RepositoryTableModel extends AbstractTableModel {
     }
 
     /**
+     * 仅选择指定仓库，其余仓库全部取消选择。
+     *
+     * @param repositoryId 需要保留选中状态的仓库标识
+     */
+    public void selectOnly(String repositoryId) {
+        for (int index = 0; index < repositories.size(); index++) {
+            WorkspaceRepository repository = repositories.get(index);
+            repository.setSelected(repository.getId().equals(repositoryId));
+        }
+        fireTableDataChanged();
+    }
+
+    /**
+     * 返回当前所有仓库是否均被选中。
+     *
+     * @return 全部选中返回 {@code true}
+     */
+    public boolean isAllSelected() {
+        return !repositories.isEmpty() && repositories.stream().allMatch(WorkspaceRepository::isSelected);
+    }
+
+    /**
+     * 批量设置所有仓库的选择状态。
+     *
+     * @param selected 目标选择状态
+     */
+    public void setAllSelected(boolean selected) {
+        for (WorkspaceRepository repository : repositories) {
+            repository.setSelected(selected);
+        }
+        fireTableDataChanged();
+    }
+
+    /**
      * 更新指定仓库的最近结果摘要。
      *
      * @param repositoryId 仓库标识
@@ -135,5 +160,59 @@ public class RepositoryTableModel extends AbstractTableModel {
                 return;
             }
         }
+    }
+
+    /**
+     * 返回指定仓库所在行的状态颜色。
+     *
+     * @param rowIndex 行号
+     * @return 状态颜色类型
+     */
+    public RepositoryStatusColor getStatusColorAt(int rowIndex) {
+        WorkspaceRepository repository = repositories.get(rowIndex);
+        if (repository.isOperationBlocked()) {
+            return RepositoryStatusColor.DANGER;
+        }
+        if (repository.hasUncommittedChanges()) {
+            return RepositoryStatusColor.WARNING;
+        }
+        return RepositoryStatusColor.SUCCESS;
+    }
+
+    private String resolveStatusText(WorkspaceRepository repository) {
+        if (repository.isOperationBlocked()) {
+            return repository.getBlockReason();
+        }
+        if (repository.getTargetBranchState() != null
+                && !repository.getTargetBranchState().isBlank()
+                && !"未知".equals(repository.getTargetBranchState())) {
+            return repository.getTargetBranchState();
+        }
+        if (repository.hasUncommittedChanges()) {
+            return "有变更";
+        }
+        return "正常";
+    }
+
+    /**
+     * 表示仓库状态对应的颜色类型。
+     *
+     * @author August Lee
+     */
+    public enum RepositoryStatusColor {
+        /**
+         * 绿色，表示仓库状态正常。
+         */
+        SUCCESS,
+
+        /**
+         * 橙色，表示仓库存在未提交变更。
+         */
+        WARNING,
+
+        /**
+         * 红色，表示仓库当前不可切换。
+         */
+        DANGER
     }
 }
