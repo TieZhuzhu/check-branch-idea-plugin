@@ -1,0 +1,30 @@
+# 项目文档知识库
+
+`/docs` 是 `check-branch-idea-plugin` 的项目知识库，用于沉淀需求背景、功能说明、实现细节、
+排障经验和后续规划。
+
+## 同步规则
+
+- 所有需求开发和细节变更都需要同步到对应文档。
+- 已完成需求需要补充最终行为和使用方式。
+- 未完成需求可以追加为带有 `[未完成]` 标记的待办记录。
+- 当前阶段仅做同步新增或语义更新，不做删除；除非原有内容的语义已经被新规则替代。
+- 所有项目产出文档、代码注释、用户可见输入输出和交付总结都必须使用中文。
+- 所有新增或修改文件必须使用 UTF-8（非 BOM）编码。
+
+## 建议结构
+
+- `features/`：功能说明、交互或行为变更
+- `decisions/`：设计决策、权衡与约束
+- `operations/`：运行、调试、排障说明
+- `todo/`：未来计划与 `[未完成]` 项
+
+新增文档时，优先保持最小结构，并确保文件名和内容能直接反映主题。
+
+## 当前文档入口
+
+- 功能说明：[branch-switch-plugin.md](features/branch-switch-plugin.md)
+- 技术选型：[idea-plugin-tech-stack.md](decisions/idea-plugin-tech-stack.md)
+- 用户操作手册：[branch-switch-plugin-user-guide.md](operations/branch-switch-plugin-user-guide.md)
+- 发布与验证手册：[branch-switch-plugin-release-guide.md](operations/branch-switch-plugin-release-guide.md)
+- 后续问题与建议：[open-source-plugin-improvements.md](todo/open-source-plugin-improvements.md)

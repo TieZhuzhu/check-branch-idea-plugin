@@ -1,0 +1,20 @@
+<idea-plugin>
+    <id>com.augustlee.tool.checkbranch</id>
+    <name>Easy Multi Project Check Branch</name>
+    <vendor email="l836268029@gmail.com" url="https://www.augustlee.cn">August Lee</vendor>
+    <resource-bundle>messages.CheckBranchBundle</resource-bundle>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="checkbranch.notification"
+                           displayType="BALLOON"/>
+        <toolWindow id="分支切换"
+                    anchor="right"
+                    canCloseContents="false"
+                    icon="/icons/easyMultiProjectCheckBranchToolWindow.svg"
+                    factoryClass="com.augustlee.tool.checkbranch.CheckBranchToolWindowFactory"/>
+    </extensions>
+</idea-plugin>
