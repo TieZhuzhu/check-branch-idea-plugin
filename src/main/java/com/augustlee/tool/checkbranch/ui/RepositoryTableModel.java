@@ -146,6 +146,13 @@ public class RepositoryTableModel extends AbstractTableModel {
     }
 
     /**
+     * 刷新当前所有仓库行，适用于仓库对象字段已在外部更新的场景。
+     */
+    public void refreshAllRows() {
+        fireTableDataChanged();
+    }
+
+    /**
      * 更新指定仓库的最近结果摘要。
      *
      * @param repositoryId 仓库标识

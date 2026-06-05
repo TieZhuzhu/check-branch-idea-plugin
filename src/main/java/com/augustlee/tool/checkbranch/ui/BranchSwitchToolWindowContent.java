@@ -61,6 +61,7 @@ public class BranchSwitchToolWindowContent extends JPanel {
 
     private final Project project;
     private final RepositoryDiscoveryService repositoryDiscoveryService = new RepositoryDiscoveryService();
+    private final ChangeProtectionService changeProtectionService;
     private final BranchSwitchService branchSwitchService;
     private final CheckBranchNotifier checkBranchNotifier = new CheckBranchNotifier();
     private final RepositoryTableModel repositoryTableModel = new RepositoryTableModel();
@@ -83,7 +84,8 @@ public class BranchSwitchToolWindowContent extends JPanel {
     public BranchSwitchToolWindowContent(Project project) {
         super(new BorderLayout(0, 8));
         this.project = project;
-        this.branchSwitchService = new BranchSwitchService(new ChangeProtectionService(new IdeaShelveExecutor(project)));
+        this.changeProtectionService = new ChangeProtectionService(new IdeaShelveExecutor(project));
+        this.branchSwitchService = new BranchSwitchService(changeProtectionService);
         setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         add(createTopPanel(), BorderLayout.NORTH);
         add(createCenterPanel(), BorderLayout.CENTER);
@@ -328,11 +330,6 @@ public class BranchSwitchToolWindowContent extends JPanel {
             statusLabel.setText(BUNDLE.getString("validation.repository.empty"));
             return;
         }
-        Map<String, ChangeProtectionMode> changeProtectionModes = collectChangeProtectionModes(selectedRepositories);
-        if (changeProtectionModes == null) {
-            statusLabel.setText(BUNDLE.getString("dialog.unsaved.cancel"));
-            return;
-        }
 
         List<String> repositoryIds = selectedRepositories.stream()
                 .map(WorkspaceRepository::getId)
@@ -346,12 +343,91 @@ public class BranchSwitchToolWindowContent extends JPanel {
                 false
         );
 
-        // 分支切换会触发真实 Git checkout/fetch，必须放到后台线程，避免阻塞 IDEA 主线程。
         List<WorkspaceRepository> repositorySnapshot = new ArrayList<>(repositoryTableModel.getRepositories());
         List<String> mainBranchCandidates = branchPreferenceService.getMainBranchCandidates();
+        detectLatestChangesAndSwitch(
+                selectedRepositories,
+                request,
+                repositorySnapshot,
+                mainBranchCandidates,
+                branchPreferenceService,
+                targetBranch
+        );
+    }
+
+    private void detectLatestChangesAndSwitch(
+            List<WorkspaceRepository> selectedRepositories,
+            BranchSwitchRequest request,
+            List<WorkspaceRepository> repositorySnapshot,
+            List<String> mainBranchCandidates,
+            BranchPreferenceService branchPreferenceService,
+            String targetBranch
+    ) {
         switchButton.setEnabled(false);
         refreshButton.setEnabled(false);
         operationProgressBar.setVisible(true);
+        statusLabel.setText(BUNDLE.getString("status.detecting.changes"));
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "检测未提交变更", false) {
+            @Override
+            public void run(ProgressIndicator indicator) {
+                indicator.setIndeterminate(true);
+                indicator.setText("正在重新检测选中仓库的未提交变更...");
+                Map<String, Boolean> latestChangeStates = new HashMap<>();
+                for (WorkspaceRepository repository : selectedRepositories) {
+                    boolean hasChanges = changeProtectionService.hasUncommittedChanges(Path.of(repository.getRootPath()));
+                    repository.setHasUncommittedChanges(hasChanges);
+                    latestChangeStates.put(repository.getId(), hasChanges);
+                }
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    applyLatestChangeStates(latestChangeStates);
+                    applyLatestChangeStates(repositorySnapshot, latestChangeStates);
+                    Map<String, ChangeProtectionMode> changeProtectionModes = collectChangeProtectionModes(selectedRepositories);
+                    if (changeProtectionModes == null) {
+                        statusLabel.setText(BUNDLE.getString("dialog.unsaved.cancel"));
+                        switchButton.setEnabled(true);
+                        refreshButton.setEnabled(true);
+                        operationProgressBar.setVisible(false);
+                        return;
+                    }
+                    runBatchSwitch(request, repositorySnapshot, mainBranchCandidates, changeProtectionModes, branchPreferenceService, targetBranch);
+                });
+            }
+        });
+    }
+
+    private void applyLatestChangeStates(Map<String, Boolean> latestChangeStates) {
+        for (WorkspaceRepository repository : repositoryTableModel.getRepositories()) {
+            Boolean hasChanges = latestChangeStates.get(repository.getId());
+            if (hasChanges != null) {
+                repository.setHasUncommittedChanges(hasChanges);
+            }
+        }
+        repositoryTableModel.refreshAllRows();
+        refreshSelectionCount();
+    }
+
+    private void applyLatestChangeStates(List<WorkspaceRepository> repositories, Map<String, Boolean> latestChangeStates) {
+        for (WorkspaceRepository repository : repositories) {
+            Boolean hasChanges = latestChangeStates.get(repository.getId());
+            if (hasChanges != null) {
+                repository.setHasUncommittedChanges(hasChanges);
+            }
+        }
+    }
+
+    private void runBatchSwitch(
+            BranchSwitchRequest request,
+            List<WorkspaceRepository> repositorySnapshot,
+            List<String> mainBranchCandidates,
+            Map<String, ChangeProtectionMode> changeProtectionModes,
+            BranchPreferenceService branchPreferenceService,
+            String targetBranch
+    ) {
+        // 分支切换会触发真实 Git checkout/fetch，必须放到后台线程，避免阻塞 IDEA 主线程。
+        switchButton.setEnabled(false);
+        refreshButton.setEnabled(false);
+        operationProgressBar.setVisible(true);
+        statusLabel.setText(BUNDLE.getString("status.switching"));
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "执行分支切换", false) {
             @Override
             public void run(ProgressIndicator indicator) {

@@ -6,6 +6,8 @@ import com.augustlee.tool.checkbranch.model.SwitchResult;
 import com.augustlee.tool.checkbranch.model.SwitchResultStatus;
 import com.augustlee.tool.checkbranch.model.TemporaryChangeRecord;
 import com.augustlee.tool.checkbranch.model.WorkspaceRepository;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,6 +36,7 @@ import java.util.stream.Collectors;
 public class BranchSwitchService {
 
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages.CheckBranchBundle");
+    private static final int MAX_CONCURRENT_SWITCHES = 3;
     private final ChangeProtectionService changeProtectionService;
 
     /**
@@ -80,15 +89,101 @@ public class BranchSwitchService {
         request.validate();
         Map<String, WorkspaceRepository> repositoryMap = repositories.stream()
                 .collect(Collectors.toMap(WorkspaceRepository::getId, Function.identity(), (left, right) -> left));
+        if (request.isCancelOnFirstFailure() || request.getRepositoryIds().size() <= 1) {
+            return switchBranchesSequentially(request, repositoryMap, mainBranchCandidates, changeProtectionModes);
+        }
+        return switchBranchesConcurrently(request, repositoryMap, mainBranchCandidates, changeProtectionModes);
+    }
+
+    private List<SwitchResult> switchBranchesSequentially(
+            BranchSwitchRequest request,
+            Map<String, WorkspaceRepository> repositoryMap,
+            List<String> mainBranchCandidates,
+            Map<String, ChangeProtectionMode> changeProtectionModes
+    ) {
         List<SwitchResult> results = new ArrayList<>();
         for (String repositoryId : request.getRepositoryIds()) {
-            WorkspaceRepository repository = repositoryMap.get(repositoryId);
-            if (repository == null) {
-                results.add(buildFailedResult(repositoryId, request.getTargetBranch(), "仓库不存在或未刷新"));
-                continue;
+            results.add(switchRepositoryById(request, repositoryMap, mainBranchCandidates, changeProtectionModes, repositoryId));
+            if (request.isCancelOnFirstFailure()
+                    && results.get(results.size() - 1).getStatus() == SwitchResultStatus.FAILED) {
+                break;
             }
-            ChangeProtectionMode mode = changeProtectionModes.getOrDefault(repositoryId, request.getChangeProtectionMode());
-            results.add(switchRepository(repository, request.getTargetBranch(), mainBranchCandidates, mode));
+        }
+        return results;
+    }
+
+    private List<SwitchResult> switchBranchesConcurrently(
+            BranchSwitchRequest request,
+            Map<String, WorkspaceRepository> repositoryMap,
+            List<String> mainBranchCandidates,
+            Map<String, ChangeProtectionMode> changeProtectionModes
+    ) {
+        Semaphore switchSemaphore = new Semaphore(Math.min(MAX_CONCURRENT_SWITCHES, request.getRepositoryIds().size()));
+        ExecutorService fallbackExecutorService = null;
+        List<Future<SwitchResult>> futures = new ArrayList<>();
+        try {
+            Application application = ApplicationManager.getApplication();
+            if (application == null) {
+                fallbackExecutorService = Executors.newFixedThreadPool(
+                        Math.min(MAX_CONCURRENT_SWITCHES, request.getRepositoryIds().size())
+                );
+            }
+            for (String repositoryId : request.getRepositoryIds()) {
+                Callable<SwitchResult> switchTask = () -> {
+                    boolean acquired = false;
+                    try {
+                        switchSemaphore.acquire();
+                        acquired = true;
+                        return switchRepositoryById(request, repositoryMap, mainBranchCandidates, changeProtectionModes, repositoryId);
+                    } finally {
+                        if (acquired) {
+                            switchSemaphore.release();
+                        }
+                    }
+                };
+                futures.add(application == null
+                        ? fallbackExecutorService.submit(switchTask)
+                        : application.executeOnPooledThread(switchTask));
+            }
+            return collectSwitchResults(request, futures);
+        } finally {
+            if (fallbackExecutorService != null) {
+                fallbackExecutorService.shutdownNow();
+            }
+        }
+    }
+
+    private SwitchResult switchRepositoryById(
+            BranchSwitchRequest request,
+            Map<String, WorkspaceRepository> repositoryMap,
+            List<String> mainBranchCandidates,
+            Map<String, ChangeProtectionMode> changeProtectionModes,
+            String repositoryId
+    ) {
+        WorkspaceRepository repository = repositoryMap.get(repositoryId);
+        if (repository == null) {
+            return buildFailedResult(repositoryId, request.getTargetBranch(), "仓库不存在或未刷新");
+        }
+        ChangeProtectionMode mode = changeProtectionModes.getOrDefault(repositoryId, request.getChangeProtectionMode());
+        return switchRepository(repository, request.getTargetBranch(), mainBranchCandidates, mode);
+    }
+
+    private List<SwitchResult> collectSwitchResults(BranchSwitchRequest request, List<Future<SwitchResult>> futures) {
+        List<SwitchResult> results = new ArrayList<>();
+        for (int index = 0; index < futures.size(); index++) {
+            String repositoryId = request.getRepositoryIds().get(index);
+            try {
+                results.add(futures.get(index).get());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                results.add(buildFailedResult(repositoryId, request.getTargetBranch(), "分支切换任务被中断"));
+            } catch (ExecutionException exception) {
+                Throwable cause = exception.getCause();
+                String message = cause == null || cause.getMessage() == null
+                        ? "分支切换任务执行异常"
+                        : cause.getMessage();
+                results.add(buildFailedResult(repositoryId, request.getTargetBranch(), message));
+            }
         }
         return results;
     }
