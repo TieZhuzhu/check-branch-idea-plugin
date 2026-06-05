@@ -218,6 +218,40 @@ class BranchSwitchServiceTest {
     }
 
     /**
+     * 验证并发批量切换仍按请求中的仓库顺序返回结果。
+     *
+     * @param tempDir 临时目录
+     * @throws IOException 当测试仓库初始化失败时抛出
+     */
+    @Test
+    void shouldKeepResultOrderWhenSwitchingConcurrently(@TempDir Path tempDir) throws IOException {
+        WorkspaceRepository serviceOrder = createGitRepository(tempDir, tempDir.resolve("service-order"), "main");
+        WorkspaceRepository serviceUser = createGitRepository(tempDir, tempDir.resolve("service-user"), "main");
+        WorkspaceRepository servicePay = createGitRepository(tempDir, tempDir.resolve("service-pay"), "main");
+        runGit(serviceOrder.getRootPath(), "checkout", "-b", "feature/demo");
+        runGit(serviceOrder.getRootPath(), "checkout", "main");
+
+        BranchSwitchRequest request = new BranchSwitchRequest(
+                "concurrent-request",
+                "feature/demo",
+                List.of(serviceUser.getId(), servicePay.getId(), serviceOrder.getId()),
+                ChangeProtectionMode.ASK,
+                Instant.now(),
+                false
+        );
+
+        List<SwitchResult> results = branchSwitchService.switchBranches(
+                request,
+                List.of(serviceOrder, serviceUser, servicePay),
+                List.of("main", "master")
+        );
+
+        assertEquals(serviceUser.getId(), results.get(0).getRepositoryId());
+        assertEquals(servicePay.getId(), results.get(1).getRepositoryId());
+        assertEquals(serviceOrder.getId(), results.get(2).getRepositoryId());
+    }
+
+    /**
      * 验证目标分支缺失时可以回退到 master。
      *
      * @param tempDir 临时目录

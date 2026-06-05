@@ -53,8 +53,8 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 - `test` 通过。
 - `buildPlugin` 通过并生成 ZIP。
 - `README.md` 中 `<!-- Plugin description -->` 片段与实际功能一致。
-- `build.gradle.kts` 的 `pluginConfiguration.description` 与插件市场描述一致。
-- `src/main/resources/META-INF/plugin.xml` 中的 `<description>` 与实际功能一致。
+- `build.gradle.kts` 的 `pluginConfiguration.description` 仍从 README 标记区间读取。
+- `src/main/resources/META-INF/plugin.xml` 不手写 `<description>`。
 - `docs/operations/branch-switch-plugin-user-guide.md` 已覆盖最新用户操作。
 - 使用 `runIde` 打开至少一个多仓库工作区，验证刷新不会卡死 UI。
 - 验证当前已在目标分支的仓库会跳过。
@@ -64,13 +64,13 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 
 ## 插件描述维护规则
 
-当前项目有三处面向外部用户的描述来源：
+当前项目只维护一处面向外部用户的描述来源：
 
 - `README.md` 的 `<!-- Plugin description -->` 区块。
-- `build.gradle.kts` 中 `intellijPlatform.pluginConfiguration.description`。
-- `src/main/resources/META-INF/plugin.xml` 中 `<description>`。
 
-功能行为发生变化时，三处描述需要同步维护，避免 GitHub、构建产物和 IDE 插件详情页出现不一致。
+`build.gradle.kts` 中 `intellijPlatform.pluginConfiguration.description` 会读取该区块并写入最终插件产物。`src/main/resources/META-INF/plugin.xml` 不再手写 `<description>`，避免 GitHub、构建产物和 IDE 插件详情页出现重复维护。
+
+功能行为发生变化时，只需要维护 `README.md` 的 `<!-- Plugin description -->` 区块。
 
 ## GitHub Release 建议流程
 

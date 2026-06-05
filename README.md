@@ -6,29 +6,33 @@
 
 <!-- Plugin description -->
 
-## easy-multi-project-check-branch
+<h2>easy-multi-project-check-branch</h2>
 
-easy-multi-project-check-branch helps you inspect and switch branches for multiple Git repositories from one IntelliJ IDEA tool window.
+<p>easy-multi-project-check-branch helps you inspect and switch branches for multiple Git repositories from one IntelliJ IDEA tool window.</p>
 
-Key features:
+<p>Key features:</p>
 
-- Discovers Git repositories already recognized by the current IDEA project without scanning arbitrary disk folders.
-- Refreshes repository status asynchronously, including current branch, target branch availability, blocked states, and tracked local changes.
-- Supports batch switching and single-repository switching; repositories already on the target branch are skipped automatically.
-- Prefers remote target branches, falls back to local branches when remote checkout is unavailable, and can fall back to configured main-branch candidates.
-- Protects tracked local changes with IDEA Shelf before switching and asks users to restore shelved changes manually afterward.
-- Keeps pure untracked files out of change protection by default to stay close to IDEA's native branch-switching behavior.
-- Shows success, fallback, skipped, failed, and manual-restore-required result cards, with full failure reasons available on hover.
+<ul>
+  <li>Discovers Git repositories already recognized by the current IDEA project without scanning arbitrary disk folders.</li>
+  <li>Refreshes repository status asynchronously, including current branch, target branch availability, blocked states, and tracked local changes.</li>
+  <li>Supports batch switching and single-repository switching; repositories already on the target branch are skipped automatically.</li>
+  <li>Prefers remote target branches, falls back to local branches when remote checkout is unavailable, and can fall back to configured main-branch candidates.</li>
+  <li>Protects tracked local changes with IDEA Shelf before switching and asks users to restore shelved changes manually afterward.</li>
+  <li>Keeps pure untracked files out of change protection by default to stay close to IDEA's native branch-switching behavior.</li>
+  <li>Shows success, fallback, skipped, failed, and manual-restore-required result cards, with full failure reasons available on hover.</li>
+</ul>
 
-中文说明：
+<p>中文说明：</p>
 
-- 自动发现当前 IDEA 项目中已识别的多个 Git 仓库，不扫描任意磁盘目录。
-- 异步刷新仓库状态，展示当前分支、目标分支可用性、阻塞状态和未提交变更状态。
-- 支持批量切换与单仓库精确切换，当前已经处在目标分支的仓库会自动跳过。
-- 目标分支存在于远端时优先按远端引用切换；远端不可用时降级尝试本地分支；目标分支缺失时按主分支候选回退。
-- 切换前检测已跟踪的未提交变更，优先使用 IDEA Shelf 搁置变更，切换完成后提示用户手动恢复。
-- 纯未跟踪文件默认不触发变更保护，尽量贴近 IDEA 自身切分支体验。
-- 底部结果卡片展示成功、回退、跳过、失败和待恢复状态，鼠标悬浮可查看完整失败原因。
+<ul>
+  <li>自动发现当前 IDEA 项目中已识别的多个 Git 仓库，不扫描任意磁盘目录。</li>
+  <li>异步刷新仓库状态，展示当前分支、目标分支可用性、阻塞状态和未提交变更状态。</li>
+  <li>支持批量切换与单仓库精确切换，当前已经处在目标分支的仓库会自动跳过。</li>
+  <li>目标分支存在于远端时优先按远端引用切换；远端不可用时降级尝试本地分支；目标分支缺失时按主分支候选回退。</li>
+  <li>切换前检测已跟踪的未提交变更，优先使用 IDEA Shelf 搁置变更，切换完成后提示用户手动恢复。</li>
+  <li>纯未跟踪文件默认不触发变更保护，尽量贴近 IDEA 自身切分支体验。</li>
+  <li>底部结果卡片展示成功、回退、跳过、失败和待恢复状态，鼠标悬浮可查看完整失败原因。</li>
+</ul>
 
 <!-- Plugin description end -->
 
