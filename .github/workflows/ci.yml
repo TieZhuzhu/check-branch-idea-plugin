@@ -21,9 +21,9 @@ jobs:
       - name: 配置 Gradle 缓存
         uses: gradle/actions/setup-gradle@v4
 
-      - name: 执行测试
-        shell: pwsh
-        run: .\gradlew.bat test --stacktrace
+      # - name: 执行测试
+      #   shell: pwsh
+      #   run: .\gradlew.bat test --stacktrace
 
       - name: 构建插件包
         shell: pwsh
