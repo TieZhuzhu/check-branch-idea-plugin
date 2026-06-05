@@ -48,6 +48,9 @@ Plugin Verifier 自动下载 IDE：
 构建产物默认位于：
 
 - `build/distributions/*.zip`
+- `build/libs/*.jar`
+
+发布时只上传插件 ZIP 和主 JAR，不上传 `*-base.jar`、`*-instrumented.jar` 等中间产物。
 
 ## 发布前手动验收清单
 
@@ -86,7 +89,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-5. 使用 GitHub Actions 发布流程执行测试、构建、线上插件验证并上传 `build/distributions/*.zip`。
+5. 使用 GitHub Actions 发布流程执行测试、构建、线上插件验证并上传 `build/distributions/*.zip` 与 `build/libs/*.jar` 主产物。
 
 如果后续新增 JetBrains Marketplace 发布，需要额外维护：
 
@@ -98,7 +101,7 @@ git push origin v0.1.0
 ## 当前状态
 
 - `test` 已作为 CI 和发布流程的主要自动化验证入口。
-- `buildPlugin` 可生成标准插件 ZIP，并作为 GitHub Release 产物来源。
+- `buildPlugin` 可生成标准插件 ZIP 与主 JAR，并作为 GitHub Release 产物来源。
 - `verifyPlugin` 已进入 CI 和 GitHub Release 默认链路；GitHub Actions 线上允许下载 verifier 所需 IDE。
 - 本地直接运行 `verifyPlugin` 时不会配置任何下载型 IDE；本机验证必须通过 `localVerificationIdePath` 指向已有 IDEA。
 
@@ -139,4 +142,4 @@ GitHub Actions 线上允许下载 verifier 所需 IDE，用于保证 CI 和 Rele
 
 ### GitHub Release 没有产物
 
-确认发布 workflow 上传的是 `build/distributions/*.zip`，而不是 Marketplace 发布任务的输出。
+确认发布 workflow 已执行 `整理发布产物`，并上传 `build/release-assets/*`，而不是 Marketplace 发布任务的输出。

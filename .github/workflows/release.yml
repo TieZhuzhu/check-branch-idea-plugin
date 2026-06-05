@@ -28,7 +28,7 @@ jobs:
 
       - name: 执行测试
         shell: pwsh
-        run: .\gradlew.bat test --stacktrace
+        run: .\gradlew.bat clean test --stacktrace
 
       - name: 构建插件包
         shell: pwsh
@@ -39,16 +39,25 @@ jobs:
         # GitHub Actions 线上允许下载 verifier 所需 IDE；本地默认不会下载，除非显式指定 localVerificationIdePath。
         run: .\gradlew.bat verifyPlugin --stacktrace
 
+      - name: 整理发布产物
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build/release-assets | Out-Null
+          Copy-Item -Path build/distributions/*.zip -Destination build/release-assets
+          Get-ChildItem -Path build/libs -Filter *.jar |
+            Where-Object { $_.Name -notmatch '-(base|instrumented)\.jar$' } |
+            Copy-Item -Destination build/release-assets
+
       - name: 上传插件构建产物
         uses: actions/upload-artifact@v4
         with:
           name: check-branch-plugin-release
-          path: build/distributions/*.zip
+          path: build/release-assets/*
           if-no-files-found: error
 
       - name: 创建 GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: build/distributions/*.zip
+          files: build/release-assets/*
           generate_release_notes: true

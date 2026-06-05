@@ -94,7 +94,10 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 .\gradlew.bat verifyPlugin -PlocalVerificationIdePath="D:\java\idea\IntelliJ IDEA 2025.3.1.1"
 ```
 
-构建产物默认输出到 `build/distributions/`。
+构建产物默认输出到 `build/distributions/` 和 `build/libs/`。GitHub Actions 会在发布前整理出：
+
+- 插件安装 ZIP：`build/distributions/*.zip`
+- 插件主 JAR：`build/libs/*.jar`，不包含 `*-base.jar` 和 `*-instrumented.jar` 中间产物
 
 ## 工程入口
 
