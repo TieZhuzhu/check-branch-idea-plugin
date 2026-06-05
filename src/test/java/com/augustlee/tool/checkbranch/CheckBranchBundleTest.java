@@ -36,7 +36,7 @@ class CheckBranchBundleTest {
     void shouldExposeChineseMessages() {
         ResourceBundle bundle = ResourceBundle.getBundle("messages.CheckBranchBundle");
 
-        assertEquals("多项目分支切换", bundle.getString("plugin.name"));
+        assertEquals("easy-multi-project-check-branch", bundle.getString("plugin.name"));
         assertEquals("分支切换", bundle.getString("toolwindow.title"));
         assertEquals("执行切换", bundle.getString("action.switch"));
     }
