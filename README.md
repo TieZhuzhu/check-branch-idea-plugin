@@ -85,8 +85,13 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 ```powershell
 .\gradlew.bat test
 .\gradlew.bat buildPlugin
-.\gradlew.bat verifyPlugin
 .\gradlew.bat runIde
+```
+
+本地插件兼容性验证只允许使用本机已经安装的 IDEA，不允许触发 Plugin Verifier 自动下载 IDE：
+
+```powershell
+.\gradlew.bat verifyPlugin -PlocalVerificationIdePath="D:\java\idea\IntelliJ IDEA 2025.3.1.1"
 ```
 
 构建产物默认输出到 `build/distributions/`。
@@ -105,7 +110,7 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 - 当前版本只处理 IDEA 当前窗口中已打开或已附加的 Git 仓库。
 - 当前版本不会自动创建缺失分支，也不会自动恢复 Shelf 中的变更。
 - 当前版本默认只把已跟踪变更纳入保护；纯未跟踪文件通常不会阻止流程，但如果 checkout 会覆盖未跟踪文件，Git 仍可能拒绝切换并在结果中显示失败。
-- `verifyPlugin` 仍需要持续纳入发布门禁；如果本地或 CI 遇到 IntelliJ Plugin Verifier 依赖解析问题，请先参考发布手册记录排查。
+- `verifyPlugin` 已纳入 GitHub Actions 线上 CI 和 Release 链路，线上允许下载 verifier 所需 IDE；本地只允许显式指定已安装 IDEA 路径后执行，避免占满本机磁盘。
 
 ## 许可证
 

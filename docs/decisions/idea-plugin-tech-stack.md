@@ -4,8 +4,8 @@
 
 ## 结论
 
-当前项目使用 Java 21、Gradle Kotlin DSL、IntelliJ Platform Gradle Plugin 2.x，并以 IntelliJ IDEA
-2024.2+ 作为初始兼容基线。
+当前项目使用 Java 21、Gradle Kotlin DSL、Gradle 9.0.0、IntelliJ Platform Gradle Plugin 2.16.0，
+并以 IntelliJ IDEA 2024.2+ 作为初始兼容基线。
 
 ## 参考项目
 
@@ -29,26 +29,28 @@
 
 - 初始插件兼容范围将收敛到 IDEA 2024.2+，不承诺支持 2023.3 或更早版本。
 - 持续集成、发布和本地开发都需要安装 JDK 21。
-- 插件验证矩阵应优先覆盖 2024.2 及以上 IDE。
+- GitHub Actions 线上允许下载 verifier 所需 IDE；本机插件兼容性验证只允许使用已安装 IDEA。
 
 ## 推荐技术栈
 
 - 语言：Java 21
-- 构建：Gradle Kotlin DSL
-- 插件构建：IntelliJ Platform Gradle Plugin 2.x
+- 构建：Gradle Kotlin DSL、Gradle Wrapper 9.0.0
+- 插件构建：IntelliJ Platform Gradle Plugin 2.16.0
 - IDE 基线：IntelliJ IDEA Community 2024.2+
 - 插件依赖：平台能力、Java 模块、Git 相关能力
 - 界面入口：右侧工具窗口，默认支持固定停靠使用方式
 - 持久化：优先使用 IDEA 平台状态服务保存用户偏好，例如主分支候选、最近目标分支和默认暂存策略
 - 打包：生成标准插件 ZIP，同时可保留独立安装包产物
-- 发布：持续集成校验、插件验证、构建产物、标签触发 GitHub 发布
+- 发布：持续集成测试、插件验证、插件构建产物、标签触发 GitHub 发布
 
 ## 发布流水线建议
 
-- `ci.yml` 在推送和拉取请求时执行构建、测试和插件验证。
+- `ci.yml` 在推送和拉取请求时执行测试和插件构建。
 - `release.yml` 支持手动触发和 `v*` 标签触发。
-- GitHub Actions 使用 JDK 21 构建、测试、验证和打包。
+- GitHub Actions 使用 JDK 21 测试、打包和执行线上插件验证。
 - 发布流程需要上传插件 ZIP 和可选独立安装包。
+- `verifyPlugin` 进入 CI 和 GitHub Release 默认链路；线上允许下载 verifier 所需 IDE。
+- 本机执行 `verifyPlugin` 时必须显式指定本机已有 IDEA 路径，避免自动下载占满磁盘。
 - 如果后续要发布到 JetBrains Marketplace，需要通过环境变量提供签名证书和发布 token。
 
 ## 当前实际构建命令
@@ -67,10 +69,10 @@
 .\gradlew.bat buildPlugin --stacktrace --no-configuration-cache
 ```
 
-- 插件验证：
+- 本机插件兼容性验证。必须指定本机已安装 IDEA 路径，避免下载大量 IDE：
 
 ```powershell
-.\gradlew.bat verifyPlugin --stacktrace --no-configuration-cache
+.\gradlew.bat verifyPlugin -PlocalVerificationIdePath="D:\java\idea\IntelliJ IDEA 2025.3.1.1" --stacktrace --no-configuration-cache
 ```
 
 - 沙箱运行：
@@ -83,7 +85,7 @@
 
 - `test` 已通过。
 - `buildPlugin` 已通过，并生成插件 ZIP。
-- `verifyPlugin` 当前受 `:intellijPluginVerifierIdes` 依赖解析阶段的 `ConcurrentModificationException` 阻塞，待后续定位 Gradle / Plugin Verifier 兼容问题。
+- `verifyPlugin` 已恢复到 CI / Release 链路；本机只作为显式验证入口保留。
 
 ## 暂不采用的方案
 

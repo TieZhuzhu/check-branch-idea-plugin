@@ -3,11 +3,17 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij.platform") version "2.0.1"
+    id("org.jetbrains.intellij.platform") version "2.16.0"
 }
 
 group = "com.augustlee.tool"
 version = "0.1.0-SNAPSHOT"
+
+val localVerificationIdePath = providers.gradleProperty("localVerificationIdePath")
+    .orElse(providers.environmentVariable("LOCAL_VERIFICATION_IDE_PATH"))
+val isGitHubActions = providers.environmentVariable("GITHUB_ACTIONS")
+    .map { it.equals("true", ignoreCase = true) }
+    .orElse(false)
 
 repositories {
     mavenCentral()
@@ -24,14 +30,12 @@ dependencies {
         bundledPlugin("com.intellij.java")
         bundledPlugin("Git4Idea")
 
-        instrumentationTools()
-        pluginVerifier()
-        zipSigner()
         testFramework(TestFrameworkType.Plugin.Java)
     }
 
     testImplementation(platform("org.junit:junit-bom:5.10.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("junit:junit:4.13.2")
 }
 
@@ -55,7 +59,12 @@ intellijPlatform {
 
     pluginVerification {
         ides {
-            recommended()
+            val idePath = localVerificationIdePath.orNull
+            if (!idePath.isNullOrBlank()) {
+                local(file(idePath))
+            } else if (isGitHubActions.get()) {
+                current()
+            }
         }
     }
 
@@ -82,7 +91,7 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "8.13"
+        gradleVersion = "9.0.0"
     }
 
     buildSearchableOptions {

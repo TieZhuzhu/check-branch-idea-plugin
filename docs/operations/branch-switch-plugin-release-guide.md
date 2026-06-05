@@ -38,10 +38,11 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 .\gradlew.bat runIde
 ```
 
-插件验证：
+本地插件兼容性验证只允许使用本机已经安装的 IDEA。必须显式指定本机 IDEA 安装目录，不能让
+Plugin Verifier 自动下载 IDE：
 
 ```powershell
-.\gradlew.bat verifyPlugin --stacktrace --no-configuration-cache
+.\gradlew.bat verifyPlugin -PlocalVerificationIdePath="D:\java\idea\IntelliJ IDEA 2025.3.1.1" --stacktrace --no-configuration-cache
 ```
 
 构建产物默认位于：
@@ -52,6 +53,7 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 
 - `test` 通过。
 - `buildPlugin` 通过并生成 ZIP。
+- 本机如需插件兼容性验证，必须使用 `localVerificationIdePath` 指向本机已有 IDEA，不允许下载大量 IDE。
 - `README.md` 中 `<!-- Plugin description -->` 片段与实际功能一致。
 - `build.gradle.kts` 的 `pluginConfiguration.description` 仍从 README 标记区间读取。
 - `src/main/resources/META-INF/plugin.xml` 不手写 `<description>`。
@@ -74,7 +76,7 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 
 ## GitHub Release 建议流程
 
-1. 确保本地验证通过。
+1. 确保本地测试和插件构建通过。
 2. 更新版本号，例如 `build.gradle.kts` 中的 `version`。
 3. 更新 README、用户手册和发布手册。
 4. 创建标签：
@@ -84,20 +86,32 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-5. 使用 GitHub Actions 发布流程上传 `build/distributions/*.zip`。
+5. 使用 GitHub Actions 发布流程执行测试、构建、线上插件验证并上传 `build/distributions/*.zip`。
 
 如果后续新增 JetBrains Marketplace 发布，需要额外维护：
 
 - 插件签名证书环境变量。
 - Marketplace 发布 token。
 - changelog 或 release notes。
-- 插件验证矩阵。
+- GitHub Actions 线上插件验证策略，以及本机 IDEA 安装目录下的插件兼容性验证策略。
 
 ## 当前状态
 
-- `test` 已作为主要自动化验证入口。
-- `buildPlugin` 可生成标准插件 ZIP。
-- `verifyPlugin` 应继续作为正式发布前门禁；如果遇到 `:intellijPluginVerifierIdes` 依赖解析阶段异常，需要优先定位 Gradle / IntelliJ Plugin Verifier 兼容链路，而不是直接忽略插件验证。
+- `test` 已作为 CI 和发布流程的主要自动化验证入口。
+- `buildPlugin` 可生成标准插件 ZIP，并作为 GitHub Release 产物来源。
+- `verifyPlugin` 已进入 CI 和 GitHub Release 默认链路；GitHub Actions 线上允许下载 verifier 所需 IDE。
+- 本地直接运行 `verifyPlugin` 时不会配置任何下载型 IDE；本机验证必须通过 `localVerificationIdePath` 指向已有 IDEA。
+
+### Plugin Verifier 下载策略
+
+GitHub Actions 线上允许下载 verifier 所需 IDE，用于保证 CI 和 Release 仍保留插件兼容性验证。
+本机不允许默认下载大量 IDE，避免 Gradle 缓存占满磁盘。
+
+本机需要做兼容性验证时，先确认目标 IDEA 已经安装，再执行：
+
+```powershell
+.\gradlew.bat verifyPlugin -PlocalVerificationIdePath="D:\java\idea\IntelliJ IDEA 2025.3.1.1" --stacktrace --no-configuration-cache
+```
 
 ## 排障建议
 

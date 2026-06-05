@@ -3,7 +3,7 @@
 ## 发布前建议优先处理
 
 - [未完成] 补充 JetBrains Marketplace 所需的 `change-notes` 或独立 `CHANGELOG.md`，避免发布时只有功能描述、没有版本变更说明。
-- [未完成] 明确 `verifyPlugin` 的发布门禁策略，并修复或记录 `:intellijPluginVerifierIdes` 依赖解析阶段异常的稳定规避方案。
+- [已完成] 明确 `verifyPlugin` 的发布门禁策略：CI 和 GitHub Release 默认调用，线上允许下载 verifier 所需 IDE；开发者本机只能通过 `localVerificationIdePath` 使用已安装 IDEA 做验证，避免下载大量 IDE。
 - [未完成] 为 GitHub Release 工作流确认上传产物为 `build/distributions/*.zip`，不要误用 Marketplace 发布任务。
 - [未完成] 增加发布前手动验收截图或 GIF，README 后续可以展示工具窗口、变更保护弹窗和结果卡片。
 - [未完成] 明确版本号策略，例如 `0.1.0` 用于首个可用开源版本，后续按 SemVer 维护。
@@ -32,6 +32,7 @@
 - [未完成] 增加 PR 模板，要求说明测试结果、影响范围和文档是否同步。
 - [未完成] 增加 `CHANGELOG.md`，每次发布前维护用户可读变更。
 - [未完成] README 后续可以增加英文简介，方便 JetBrains Marketplace 或 GitHub 英文用户理解。
+- [未完成] 如需 JetBrains Marketplace 正式发布，再单独设计更完整的插件验证矩阵；本地仍需避免下载大量 IDE。
 
 ## 技术债建议
 
