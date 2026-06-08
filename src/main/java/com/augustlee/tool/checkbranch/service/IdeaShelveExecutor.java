@@ -6,9 +6,10 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.ContentRevision;
-import com.intellij.openapi.vcs.changes.VcsShelveUtils;
+import com.intellij.openapi.vcs.changes.shelf.ShelveChangesManager;
 import com.intellij.openapi.vcs.changes.shelf.ShelvedChangeList;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -58,9 +59,10 @@ public class IdeaShelveExecutor implements ChangeProtectionService.ShelveExecuto
         try {
             // 第一个 true 表示搁置成功后回滚工作区变更，保证后续分支切换不会被本地修改阻塞；
             // 第二个 false 保持 IDEA Shelf 默认粒度，不额外强制二进制文本内容写入策略。
-            ShelvedChangeList shelvedChangeList = VcsShelveUtils.shelveChanges(project, repositoryChanges, shelveName, true, false);
+            ShelvedChangeList shelvedChangeList = ShelveChangesManager.getInstance(project)
+                    .shelveChanges(repositoryChanges, shelveName, true, false);
             return ChangeProtectionService.ProtectionCommandResult.success(shelvedChangeList.getName());
-        } catch (VcsException exception) {
+        } catch (IOException | VcsException exception) {
             return ChangeProtectionService.ProtectionCommandResult.failed("IDEA 搁置变更失败：" + exception.getMessage());
         } catch (RuntimeException exception) {
             return ChangeProtectionService.ProtectionCommandResult.failed("IDEA 搁置变更异常：" + exception.getMessage());
