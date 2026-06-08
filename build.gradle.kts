@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.augustlee.tool"
-version = "1.0.2"
+version = "1.0.3"
 
 val localVerificationIdePath = providers.gradleProperty("localVerificationIdePath")
     .orElse(providers.environmentVariable("LOCAL_VERIFICATION_IDE_PATH"))
