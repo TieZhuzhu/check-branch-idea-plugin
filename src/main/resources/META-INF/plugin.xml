@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.augustlee.tool.checkbranch</id>
-    <name>Easy Multi Project Check Branch</name>
+    <name>Easy Multi Project Checkout Branch</name>
     <vendor email="l836268029@gmail.com" url="https://www.augustlee.cn">August Lee</vendor>
     <resource-bundle>messages.CheckBranchBundle</resource-bundle>
 

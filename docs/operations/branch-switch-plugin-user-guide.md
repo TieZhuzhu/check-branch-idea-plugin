@@ -2,7 +2,7 @@
 
 ## 适用范围
 
-本文档面向使用 `Easy Multi Project Check Branch` 插件的开发人员，说明插件安装、刷新仓库、批量切换、未提交变更保护和结果排查方式。
+本文档面向使用 `Easy Multi Project Checkout Branch` 插件的开发人员，说明插件安装、刷新仓库、批量切换、未提交变更保护和结果排查方式。
 
 当前版本适用于 IntelliJ IDEA 2024.2+，主要服务于一个 IDEA 窗口中同时打开多个 Git 仓库的微服务开发场景。
 
